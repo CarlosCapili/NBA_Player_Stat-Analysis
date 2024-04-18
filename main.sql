@@ -23,22 +23,31 @@ GROUP BY season;
 
 -- What is the average number of games played by an NBA player per season? (What are the percentage increase/decline between season)
 -- simplify this query too hard to read. maybe make it into a CTE.
+WITH season_gp AS (
+	SELECT 
+		season,
+		ROUND(AVG(gp), 1) AS avg_gp,
+		LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season) AS previous_avg_gp,
+		ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season)) AS inc_dec
+	FROM nba_data
+	WHERE season LIKE '2___-__'
+	GROUP BY season
+)
+	
+	
 SELECT
 	season,
-	ROUND(AVG(gp), 1) AS avg_gp,
-	LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season) AS previous_avg_gp,
-	ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season)) AS inc_dec,
+	avg_gp,
+	inc_dec,
 	CASE
-		WHEN (ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season))) < 0 
-			THEN CONCAT(ROUND(ABS(ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season))) / LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season) * 100.0, 2), '% decrease')
-			
-		WHEN (ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season))) > 0 
-			THEN CONCAT(ROUND(ABS(ROUND(AVG(gp), 1) - (LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season))) / LAG(ROUND(AVG(gp), 1)) OVER(ORDER BY season) * 100.0, 2), '% increase')
-			
+		-- Formula: (current_gp - prev_gp) / prev_gp * 100 = % increase/decrease
+		WHEN inc_dec < 0 
+			THEN CONCAT(ROUND(ABS(inc_dec) / previous_avg_gp * 100.0, 2), '% decrease')
+		WHEN (avg_gp - previous_avg_gp) > 0 
+			THEN CONCAT(ROUND(ABS(inc_dec) / previous_avg_gp * 100.0, 2), '% increase')
 	END AS pct_inc_dec
-FROM nba_data
-WHERE season LIKE '2___-__'
-GROUP BY season;
+FROM season_gp
+
 
 -- What is the average height of an NBA player per season?
 
