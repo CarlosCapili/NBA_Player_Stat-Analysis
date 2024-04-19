@@ -22,7 +22,7 @@ FROM ordered_age
 GROUP BY season;
 
 -- What is the average number of games played by an NBA player per season? (What are the percentage increase/decline between season)
--- simplify this query too hard to read. maybe make it into a CTE.
+
 WITH season_gp AS (
 	SELECT 
 		season,
