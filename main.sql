@@ -34,7 +34,6 @@ WITH season_gp AS (
 	GROUP BY season
 )
 	
-	
 SELECT
 	season,
 	avg_gp,
@@ -49,93 +48,157 @@ SELECT
 FROM season_gp
 
 
--- What is the average height of an NBA player per season?
+What is the average height of an NBA player per season?
 
--- -- PERFORMANCE METRICS
+SELECT 
+	season,
+	ROUND(AVG(player_height)::numeric, 2) AS avg_player_height
+FROM nba_data
+WHERE season LIKE '2___-__'
+GROUP BY season
+ORDER BY season;
 
--- -- Player with the highest ppg per season from 2000 and up
--- WITH ordered_ppg AS (
--- 	SELECT
--- 		player_name,
--- 		country,
--- 		pts,
--- 		season,
--- 		ROW_NUMBER() OVER(PARTITION BY season ORDER BY pts DESC) AS rn
--- 	FROM nba_data
--- 	WHERE season LIKE '2___-__'
--- )
+-- PERFORMANCE METRICS
 
--- SELECT
--- 	player_name,
--- 	country,
--- 	pts,
--- 	season
--- FROM ordered_ppg
--- WHERE rn = 1;
+-- Player with the highest ppg per season from 2000 and up
+WITH ordered_ppg AS (
+	SELECT
+		player_name,
+		country,
+		pts,
+		season,
+		ROW_NUMBER() OVER(PARTITION BY season ORDER BY pts DESC) AS rn
+	FROM nba_data
+	WHERE season LIKE '2___-__'
+)
 
--- -- Player with the highest rpg per season from 2000 and up
--- WITH ordered_rpg AS (
--- 	SELECT
--- 		player_name,
--- 		country,
--- 		reb,
--- 		season,
--- 		ROW_NUMBER() OVER(PARTITION BY season ORDER BY reb DESC) AS rn
--- 	FROM nba_data
--- 	WHERE season LIKE '2___-__'
--- )
+SELECT
+	player_name,
+	country,
+	pts,
+	season
+FROM ordered_ppg
+WHERE rn = 1;
 
--- SELECT
--- 	player_name,
--- 	country,
--- 	reb,
--- 	season
--- FROM ordered_rpg
--- WHERE rn = 1;
+-- Player with the highest rpg per season from 2000 and up
+WITH ordered_rpg AS (
+	SELECT
+		player_name,
+		country,
+		reb,
+		season,
+		ROW_NUMBER() OVER(PARTITION BY season ORDER BY reb DESC) AS rn
+	FROM nba_data
+	WHERE season LIKE '2___-__'
+)
 
--- -- Player with the highest apg per season from 2000 and up
--- WITH ordered_apg AS (
--- 	SELECT
--- 		player_name,
--- 		country,
--- 		ast,
--- 		season,
--- 		ROW_NUMBER() OVER(PARTITION BY season ORDER BY ast DESC) AS rn
--- 	FROM nba_data
--- 	WHERE season LIKE '2___-__'
--- )
+SELECT
+	player_name,
+	country,
+	reb,
+	season
+FROM ordered_rpg
+WHERE rn = 1;
 
--- SELECT
--- 	player_name,
--- 	country,
--- 	ast,
--- 	season
--- FROM ordered_apg
--- WHERE rn = 1;
+-- Player with the highest apg per season from 2000 and up
+WITH ordered_apg AS (
+	SELECT
+		player_name,
+		country,
+		ast,
+		season,
+		ROW_NUMBER() OVER(PARTITION BY season ORDER BY ast DESC) AS rn
+	FROM nba_data
+	WHERE season LIKE '2___-__'
+)
 
--- -- Who are the top 10 most efficient scorers in 2022-23 season? (Who has the best true shooting percentage?)
--- SELECT
--- 	player_name,
--- 	team_abbrev,
--- 	country,
--- 	(ts_pct * 100.0) AS true_shooting_pct
--- FROM nba_data
--- WHERE season = '2022-23'
--- ORDER BY ts_pct DESC
--- LIMIT 10;
+SELECT
+	player_name,
+	country,
+	ast,
+	season
+FROM ordered_apg
+WHERE rn = 1;
+
+-- Top scorers in 2022-23 season
+SELECT
+	player_name,
+	team_abbrev,
+	pts
+FROM nba_data
+WHERE season = '2022-23'
+ORDER BY pts DESC
+LIMIT 10;
+
+-- Top rebounders in 2022-23 season
+SELECT
+	player_name,
+	team_abbrev,
+	reb
+FROM nba_data
+WHERE season = '2022-23'
+ORDER BY reb DESC
+LIMIT 10;
+
+-- Top assists in 2022-23 season
+SELECT
+	player_name,
+	team_abbrev,
+	ast
+FROM nba_data
+WHERE season = '2022-23'
+ORDER BY ast DESC
+LIMIT 10;
+
+-- Top 10 most efficient scorers in 2022-23 season (Who has the best true shooting percentage?)
+SELECT
+	player_name,
+	team_abbrev,
+	country,
+	(ts_pct * 100.0) AS true_shooting_pct
+FROM nba_data
+WHERE season = '2022-23'
+ORDER BY ts_pct DESC
+LIMIT 10;
 	
--- -- Top 10 players who average a double-double in 2022-23 season (pts, rebs, ast, no steals or blocks are in dataset)
--- SELECT
--- 	player_name,
--- 	team_abbrev,
--- 	pts,
--- 	reb,
--- 	ast
--- FROM nba_data
--- WHERE 
--- 	season = '2022-23'
--- 	AND ((pts >= 10 AND reb >= 10) OR (pts >= 10 AND ast >= 10) OR (reb >= 10 AND ast >= 10))
--- ORDER BY pts, reb, ast
--- LIMIT 10;
+-- Top 10 players who average a double-double in 2022-23 season (pts, rebs, ast, no steals or blocks are in dataset)
+SELECT
+	player_name,
+	team_abbrev,
+	pts,
+	reb,
+	ast
+FROM nba_data
+WHERE 
+	season = '2022-23'
+	AND ((pts >= 10 AND reb >= 10) OR (pts >= 10 AND ast >= 10) OR (reb >= 10 AND ast >= 10))
+ORDER BY pts, reb, ast
+LIMIT 10;
+
+-- Toronto Raptors players per season
+SELECT
+	season,
+	player_name,
+	gp,
+	pts,
+	reb,
+	ast
+FROM nba_data
+WHERE season LIKE '2___-__'
+	AND team_abbrev = 'TOR'
+ORDER BY season, player_name;
+
+-- Player stats per season 
+SELECT
+	season,
+	team_abbrev,
+	player_name,
+	pts,
+	reb,
+	ast
+FROM nba_data
+WHERE season LIKE '2___-__'
+ORDER BY season, team_abbrev, player_name;
+
 
 
