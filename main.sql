@@ -41,7 +41,7 @@ SELECT
 		-- Formula: (current_gp - prev_gp) / prev_gp * 100 = % increase/decrease
 		WHEN inc_dec < 0 
 			THEN CONCAT(ROUND(ABS(inc_dec) / previous_avg_gp * 100.0, 2), '% decrease')
-		WHEN (avg_gp - previous_avg_gp) > 0 
+		WHEN inc_dec > 0 
 			THEN CONCAT(ROUND(ABS(inc_dec) / previous_avg_gp * 100.0, 2), '% increase')
 	END AS pct_inc_dec
 FROM season_gp;
@@ -173,7 +173,7 @@ WHERE
 ORDER BY pts, reb, ast
 LIMIT 10;
 
--- Calculate the total points, reb, ast for each player per season (Formula: pts|reb|ast / gp = ppg|rpg|apg)
+-- -- Calculate the total points, reb, ast for each player per season (Formula: pts|reb|ast / gp = ppg|rpg|apg)
 WITH nba_trad_stats AS (
 	SELECT
 		season,
