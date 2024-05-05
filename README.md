@@ -6,3 +6,5 @@ I was interested in playing around with NBA player stats and and found one on Ka
 ### Tools
 - pgAdmin 4 (PostgreSQL)
 - PowerShell (Using Git for version control on Windows 10)
+
+### PowerBI Dashboard (In Progress)
