@@ -8,4 +8,5 @@ I was interested in playing around with NBA player stats and and found one on Ka
 - PowerShell (Using Git for version control on Windows 10)
 
 ### PowerBI Dashboard (In Progress)
-![image](https://github.com/CarlosCapili/NBA_Player_Stat-Analysis/assets/59804756/34f4caf2-884a-4ead-88b0-ffadf6729a49)
+![image](https://github.com/CarlosCapili/NBA_Player_Stat-Analysis/assets/59804756/eae24143-4c3e-498d-b2bb-a64cd64c4c72)
+
